@@ -209,7 +209,8 @@ class ComputeLoss:
 
         for i in range(self.nl):
             # anchors[3,na,2]
-            anchors = self.anchors[i]
+            #anchors = self.anchors[i]
+            anchors, shape = self.anchors[i], p[i].shape 
             # anchors[na,2]
             # p[i][b,a,gy,gx,4+1+cls]
             gain[2:6] = torch.tensor(p[i].shape)[[3, 2, 3, 2]]  # xyxy gain
@@ -287,7 +288,8 @@ class ComputeLoss:
             # Append
             a = t[:, 6].long()  # anchor indices
             # a[3*n_match_obj]
-            indices.append((b, a, gj.clamp_(0, gain[3] - 1), gi.clamp_(0, gain[2] - 1)))  # image, anchor, grid indices
+            # indices.append((b, a, gj.clamp_(0, gain[3] - 1), gi.clamp_(0, gain[2] - 1)))  # image, anchor, grid indices
+            indices.append((b, a, gj.clamp_(0, shape[2] - 1), gi.clamp_(0, shape[3] - 1)))  # image, anchor, grid
             tbox.append(torch.cat((gxy - gij, gwh), 1))  # box
             # gxy - gij才是网络真正要拟合的相对偏移！
             # anchors[3,2]   a[3*n_match_obj]
